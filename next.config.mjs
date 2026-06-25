@@ -1,11 +1,11 @@
-import { createMDX } from 'fumadocs-mdx/next';
+import { createMDX } from "fumadocs-mdx/next";
 
 const withMDX = createMDX();
 
 /** @type {import('next').NextConfig} */
 const config = {
-  output: 'export',
-  basePath: '/svelte-tv-docs',
+  output: "export",
+  basePath: "/svelte-tv-docs",
   trailingSlash: true,
   reactStrictMode: true,
 };

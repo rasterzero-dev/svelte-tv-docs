@@ -1,5 +1,5 @@
 export const appName = "Svelte TV";
-export const siteBasePath = "/svelte-tv-docs";
+export const siteBasePath = "/";
 export const docsRoute = "/docs";
 export const docsImageRoute = "/og/docs";
 export const docsContentRoute = "/llms.mdx/docs";
