@@ -1,0 +1,132 @@
+---
+title: Focus
+description: Remote-first focus and navigation.
+---
+
+TV apps are driven by focus. Users move with arrows and press Enter to act.
+
+## Focus Style
+
+Focused nodes receive the `$focus` style.
+
+```svelte
+<View
+  autofocus
+  color="#1e293bff"
+  borderRadius={12}
+  padding={24}
+  transition={{ scale: true, color: true }}
+  style={{ $focus: { scale: 1.06, color: '#2563ebff' } }}
+>
+  <Text text="Play" fontSize={30} />
+</View>
+```
+
+Add a property to `transition` when you want it to animate.
+
+## Initial Focus
+
+Use `autofocus` on the first useful item on a screen.
+
+```svelte
+<View autofocus padding={24} color="#111827ff">
+  <Text text="Start here" fontSize={28} />
+</View>
+```
+
+## Enter
+
+Return `true` from key handlers when the key was handled.
+
+```svelte
+<View
+  autofocus
+  padding={24}
+  color="#1d4ed8ff"
+  onEnter={() => {
+    console.log('selected');
+    return true;
+  }}
+>
+  <Text text="Select" fontSize={28} />
+</View>
+```
+
+## Rows and Columns
+
+`Row` and `Column` handle the common arrow-key behavior.
+
+```svelte
+<Row gap={24}>
+  <View autofocus padding={24} color="#111827ff">
+    <Text text="One" fontSize={26} />
+  </View>
+  <View padding={24} color="#111827ff">
+    <Text text="Two" fontSize={26} />
+  </View>
+</Row>
+```
+
+Use manual directional handlers only when focus should jump somewhere unusual.
+
+```svelte
+<script lang="ts">
+  let menu: { setFocus: () => void };
+</script>
+
+<View
+  onLeft={() => {
+    menu.setFocus();
+    return true;
+  }}
+>
+  <Text text="Content" fontSize={28} />
+</View>
+```
+
+## Programmatic Focus
+
+Bind a component and call `setFocus()`.
+
+```svelte
+<script lang="ts">
+  let button: { setFocus: () => void };
+</script>
+
+<View bind:this={button} padding={24} color="#111827ff">
+  <Text text="Focusable" fontSize={28} />
+</View>
+```
+
+## Hold Keys
+
+Configure held remote keys on `LightningRoot`.
+
+```svelte
+<LightningRoot
+  keyHoldOptions={{
+    userKeyHoldMap: {
+      LeftHold: 'ArrowLeft',
+      RightHold: 'ArrowRight',
+      UpHold: 'ArrowUp',
+      DownHold: 'ArrowDown',
+    },
+    holdThreshold: 180,
+  }}
+>
+  <!-- app -->
+</LightningRoot>
+```
+
+## Debugging Focus
+
+Useful exports:
+
+- `activeElement()` returns the current focused element.
+- `focusPath()` returns the focused element and its parent chain.
+
+Common fixes:
+
+- Set `autofocus` after route changes.
+- Prefer `Row`, `Column`, and `Grid` for repeated content.
+- Add animated properties to `transition`.

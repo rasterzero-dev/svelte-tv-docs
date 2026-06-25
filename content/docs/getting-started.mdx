@@ -1,0 +1,79 @@
+---
+title: Getting Started
+description: Create and run a Svelte TV app.
+---
+
+The fastest way to start is the project generator.
+
+```sh
+pnpm create svelte-tv-app
+```
+
+It creates a Svelte TV app with TypeScript, routing, ESLint, Prettier, renderer
+setup, generated fonts, and a tiny two-route example.
+
+## Run the App
+
+After the generator finishes:
+
+```sh
+cd your-app
+pnpm dev
+```
+
+Open the local URL printed by Vite.
+
+## What You Get
+
+The generated app includes:
+
+- `src/main.ts` for renderer and `Config` setup
+- `src/App.svelte` with `LightningRoot` and `HashRouter`
+- `src/routes/Home.svelte`
+- `src/routes/About.svelte`
+- `src/fonts/` for generated WebGL font assets
+
+The app is intentionally small. You can delete the example routes and start
+building your own screens.
+
+## First Screen
+
+Svelte TV screens are built from renderer nodes.
+
+```svelte
+<script lang="ts">
+  import { Text, View } from 'svelte-tv';
+</script>
+
+<View w={1920} h={1080} color="#020617ff" padding={80}>
+  <Text text="Home" fontSize={56} />
+
+  <View
+    autofocus
+    color="#1e293bff"
+    borderRadius={12}
+    padding={24}
+    transition={{ scale: true }}
+    style={{ $focus: { scale: 1.06 } }}
+  >
+    <Text text="Press Enter" fontSize={28} />
+  </View>
+</View>
+```
+
+## Common Commands
+
+```sh
+pnpm dev
+pnpm build
+pnpm check
+pnpm lint
+pnpm format
+```
+
+## Next
+
+- [Layout](/docs/essentials/layout): `View`, `Row`, `Column`, `Grid`, and virtual lists.
+- [Focus](/docs/essentials/focus): remote navigation and `$focus` styles.
+- [Config](/docs/guides/config): renderer options, debug flags, and defaults.
+- [Fonts](/docs/guides/fonts): generated WebGL font setup.

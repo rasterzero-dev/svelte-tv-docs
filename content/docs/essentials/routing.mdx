@@ -1,0 +1,144 @@
+---
+title: Routing
+description: HashRouter, Route, Navigate, and route props.
+---
+
+Svelte TV ships a small hash router. Routes live after `#` in the URL:
+
+```txt
+/#/home
+/#/details/42
+```
+
+## Basic Routes
+
+```svelte title="src/App.svelte"
+<script lang="ts">
+  import { HashRouter, LightningRoot, Route } from 'svelte-tv';
+  import Home from './pages/Home.svelte';
+  import Details from './pages/Details.svelte';
+</script>
+
+<LightningRoot target="app">
+  <HashRouter>
+    <Route path="" redirect="/home" />
+    <Route path="home" component={Home} />
+    <Route path="details/:id" component={Details} />
+  </HashRouter>
+</LightningRoot>
+```
+
+## Route Props
+
+Route components receive `params`, `location`, `navigate`, `routeData`, and
+`outlet`.
+
+```svelte title="src/pages/Details.svelte"
+<script lang="ts">
+  import { Text, View, type RouteComponentProps } from 'svelte-tv';
+
+  let { params, navigate }: RouteComponentProps = $props();
+</script>
+
+<View w={1920} h={1080} color="#020617ff" padding={80}>
+  <Text text={`Details ${params.id}`} fontSize={48} />
+
+  <View
+    autofocus
+    color="#1d4ed8ff"
+    borderRadius={8}
+    padding={[18, 24]}
+    onEnter={() => {
+      navigate('/home');
+      return true;
+    }}
+  >
+    <Text text="Back" fontSize={26} />
+  </View>
+</View>
+```
+
+## App Shell
+
+Use `root` when all pages should render inside the same shell.
+
+```svelte
+<HashRouter root={Shell}>
+  <Route path="home" component={Home} />
+  <Route path="settings" component={Settings} />
+</HashRouter>
+```
+
+Inside the shell, render `outlet`.
+
+```svelte title="src/Shell.svelte"
+<script lang="ts">
+  import type { RouteComponentProps } from 'svelte-tv';
+
+  let { outlet }: RouteComponentProps = $props();
+</script>
+
+<View w={1920} h={1080} color="#020617ff">
+  {@render outlet?.()}
+</View>
+```
+
+## Nested Routes
+
+```svelte
+<Route path="library" component={LibraryLayout}>
+  <Route path="" component={LibraryHome} />
+  <Route path="movies" component={Movies} />
+</Route>
+```
+
+The parent route receives an `outlet` for the active child route.
+
+## Lazy Routes
+
+```ts title="src/routes.ts"
+import { lazy } from "svelte-tv";
+
+export const Player = lazy(() => import("./pages/Player.svelte"));
+```
+
+```svelte
+<Route path="player/:id" component={Player} />
+```
+
+## Data Loading
+
+Use `preload` for route-level data.
+
+```svelte
+<Route
+  path="details/:id"
+  component={Details}
+  preload={async ({ params }) => {
+    const response = await fetch(`/api/items/${params.id}.json`);
+    return response.json();
+  }}
+/>
+```
+
+Read it from `routeData`.
+
+```svelte
+<script lang="ts">
+  import type { RouteComponentProps } from 'svelte-tv';
+
+  let { routeData }: RouteComponentProps = $props();
+</script>
+```
+
+## Navigation Helper
+
+Use the exported `navigate` helper from event handlers or utility code.
+
+```ts
+import { navigate } from "svelte-tv";
+
+export function openDetails(id: string) {
+  navigate(`/details/${id}`);
+}
+```

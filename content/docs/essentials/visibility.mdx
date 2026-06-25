@@ -1,0 +1,69 @@
+---
+title: Visibility
+description: Show, hide, preserve, and conditionally render nodes.
+---
+
+Svelte conditionals work as expected, but Svelte TV also includes helpers for
+common renderer lifecycle patterns.
+
+## Svelte If Blocks
+
+Use normal Svelte when a node should mount and unmount.
+
+```svelte
+{#if open}
+  <View color="#111827ff" padding={32}>
+    <Text text="Panel" fontSize={30} />
+  </View>
+{/if}
+```
+
+## Visible
+
+`Visible` renders its children only when `when` is truthy.
+
+```svelte
+<Visible when={open}>
+  <View color="#111827ff" padding={32}>
+    <Text text="Only rendered while open" fontSize={28} />
+  </View>
+</Visible>
+```
+
+## Preserve
+
+`Preserve` keeps the renderer node around and hides it when removed from the
+Svelte tree.
+
+```svelte
+<Preserve>
+  <View color="#111827ff" padding={32}>
+    <Text text="Kept alive" fontSize={28} />
+  </View>
+</Preserve>
+```
+
+Use it for expensive content that should not be recreated frequently.
+
+## Hidden
+
+`hidden` maps to `alpha`.
+
+```svelte
+<View hidden={!open} color="#111827ff" padding={32}>
+  <Text text="Hidden with alpha" fontSize={28} />
+</View>
+```
+
+Hidden nodes still exist. If the content should not participate in focus or
+layout, unmount it instead.
+
+## KeepAliveRoute
+
+Use `KeepAliveRoute` for route content that should stay alive.
+
+```svelte
+<KeepAliveRoute id="browse" path="browse" component={Browse} />
+```
+
+This is useful for browse pages with many rows or virtualized lists.

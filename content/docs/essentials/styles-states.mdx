@@ -1,0 +1,97 @@
+---
+title: Styles and States
+description: style props, focus states, and state priority.
+---
+
+Use direct props for the normal state and `style` for named states.
+
+## Focus State
+
+```svelte
+<View
+  color="#111827ff"
+  padding={24}
+  transition={{ scale: true, color: true }}
+  style={{
+    $focus: {
+      scale: 1.06,
+      color: '#2563ebff',
+    },
+  }}
+>
+  <Text text="Focusable" fontSize={28} />
+</View>
+```
+
+The default focus state key is `$focus`.
+
+```ts
+Config.focusStateKey = '$focus';
+```
+
+## Custom States
+
+You can add states on the underlying element.
+
+```svelte
+<script lang="ts">
+  import type { ElementNode } from 'svelte-tv';
+
+  let selected = $state(false);
+
+  function syncState(el: ElementNode) {
+    if (selected) {
+      el.states.add('$selected');
+    } else {
+      el.states.remove('$selected');
+    }
+  }
+</script>
+
+<View
+  onRender={syncState}
+  style={{
+    $selected: {
+      color: '#16a34aff',
+    },
+  }}
+/>
+```
+
+For most app UI, Svelte conditionals and props are simpler than manual states.
+Use states when focus, selection, or nested components need renderer-level style
+changes.
+
+## State Priority
+
+When multiple states are active, `Config.stateOrder` can control priority.
+
+```ts
+Config.stateOrder = ['$selected', '$focus'];
+```
+
+Later states have higher priority.
+
+## Forward States
+
+Use `forwardStates` when a parent state should style children.
+
+```svelte
+<View
+  forwardStates
+  style={{ $focus: { scale: 1.04 } }}
+>
+  <Text
+    text="Child text"
+    fontSize={28}
+    style={{ $focus: { color: '#ffffffff' } }}
+  />
+</View>
+```
+
+## Advice
+
+- Put stable values directly on the component.
+- Put focus-only values in `$focus`.
+- Add a matching `transition` entry for animated values.
+- Keep state names prefixed with `$`.

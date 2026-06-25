@@ -1,0 +1,101 @@
+---
+title: Text and Images
+description: Render crisp text and image textures.
+---
+
+Use `Text` for copy and `Image` for loaded image textures.
+
+## Text
+
+```svelte
+<Text
+  text="Continue Watching"
+  fontSize={42}
+  color="#ffffffff"
+/>
+```
+
+Use `contain="width"` when text needs to wrap inside a known width.
+
+```svelte
+<Text
+  w={520}
+  text="A longer description that wraps across multiple lines."
+  fontSize={24}
+  lineHeight={32}
+  contain="width"
+  color="#cbd5e1ff"
+/>
+```
+
+Common text props:
+
+- `fontFamily`
+- `fontSize`
+- `fontWeight`
+- `lineHeight`
+- `textAlign`
+- `maxLines`
+- `contain`
+- `maxWidth`
+- `maxHeight`
+
+## Default Font Settings
+
+Set defaults once in `main.ts`.
+
+```ts
+import { Config } from 'svelte-tv';
+
+Config.fontSettings.fontFamily = 'Roboto-Regular';
+Config.fontSettings.fontSize = 32;
+```
+
+For WebGL text, also configure generated fonts. See [Fonts](/docs/guides/fonts).
+
+## Image
+
+```svelte
+<script lang="ts">
+  import { Image } from 'svelte-tv';
+</script>
+
+<Image
+  w={360}
+  h={220}
+  src="/posters/movie.jpg"
+  color="#ffffffff"
+/>
+```
+
+Use `placeholder` and `fallback` for smoother loading.
+
+```svelte
+<Image
+  w={360}
+  h={220}
+  src={posterUrl}
+  placeholder="/images/poster-placeholder.jpg"
+  fallback="/images/poster-fallback.jpg"
+  color="#ffffffff"
+/>
+```
+
+## Image Events
+
+Use `onEvent` for renderer texture events.
+
+```svelte
+<Image
+  w={360}
+  h={220}
+  src={posterUrl}
+  onEvent={{
+    loaded: () => console.log('loaded'),
+    failed: () => console.log('failed'),
+  }}
+/>
+```
+
+Keep image dimensions stable. A TV UI feels better when loading does not resize
+rails or cards.

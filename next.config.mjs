@@ -5,6 +5,8 @@ const withMDX = createMDX();
 /** @type {import('next').NextConfig} */
 const config = {
   output: 'export',
+  basePath: '/svelte-tv-docs',
+  trailingSlash: true,
   reactStrictMode: true,
 };
 

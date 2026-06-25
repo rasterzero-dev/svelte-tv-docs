@@ -1,0 +1,146 @@
+---
+title: Config
+description: Global Svelte TV configuration.
+---
+
+Import `Config` from `svelte-tv` and set it before mounting your app.
+
+```ts
+import { Config } from 'svelte-tv';
+```
+
+## Common Setup
+
+```ts title="src/main.ts"
+Config.animationsEnabled = true;
+Config.fontSettings.fontFamily = 'Roboto-Regular';
+Config.focusStateKey = '$focus';
+
+Config.rendererOptions = {
+  deviceLogicalPixelRatio: window.innerHeight / 1080,
+  devicePhysicalPixelRatio: 1,
+  boundsMargin: 100,
+  targetFPS: 0,
+};
+```
+
+## Renderer
+
+`rendererOptions` is passed to `@lightningjs/renderer`.
+
+```ts
+Config.rendererOptions = {
+  renderEngine: WebGlCoreRenderer,
+  fontEngines: [SdfTextRenderer],
+  fpsUpdateInterval: 1000,
+  textureMemory: {
+    criticalThreshold: 200e6,
+    targetThresholdLevel: 0.8,
+  },
+  numImageWorkers: 4,
+  deviceLogicalPixelRatio: window.innerHeight / 1080,
+  devicePhysicalPixelRatio: 1,
+  createImageBitmapSupport: 'auto',
+  boundsMargin: 100,
+  targetFPS: 0,
+  enableClear: false,
+};
+```
+
+Default: `{}`.
+
+## Fonts
+
+`fontSettings` provides default text props.
+
+```ts
+Config.fontSettings.fontFamily = 'Roboto-Regular';
+Config.fontSettings.fontSize = 32;
+```
+
+Defaults:
+
+```ts
+Config.fontSettings = {
+  fontFamily: 'sans-serif',
+  fontSize: 100,
+};
+```
+
+`fontWeightAlias` maps common weight names to renderer font suffixes.
+
+```ts
+Config.fontWeightAlias = {
+  thin: 100,
+  light: 300,
+  regular: '',
+  400: '',
+  medium: 500,
+  bold: 700,
+  black: 900,
+};
+```
+
+## Focus
+
+```ts
+Config.focusStateKey = '$focus';
+Config.throttleInput = 120;
+```
+
+- `focusStateKey` is the state added to the focused node.
+- `throttleInput` throttles global key presses in milliseconds.
+- `setActiveElement` lets advanced integrations control how active focus is stored.
+
+Default `focusStateKey`: `'$focus'`.
+
+## Animations
+
+```ts
+Config.animationsEnabled = true;
+Config.animationSettings = {
+  duration: 250,
+  easing: 'ease-in-out',
+};
+```
+
+Set `animationsEnabled = false` to disable transitions globally.
+
+## Debug Flags
+
+```ts
+Config.debug = false;
+Config.keyDebug = false;
+Config.focusDebug = false;
+Config.focusHistoryDebug = 0;
+```
+
+- `debug` enables general debug logging.
+- `keyDebug` logs keyboard handling.
+- `focusDebug` logs focus changes.
+- `focusHistoryDebug` prints recent focus history when greater than `0`.
+
+## Styling
+
+```ts
+Config.lockStyles = true;
+Config.stateOrder = [];
+```
+
+- `lockStyles` keeps authored props from being overwritten by lower-priority styles.
+- `stateOrder` controls priority when multiple state styles are active.
+
+## Advanced
+
+```ts
+Config.convertToShader = (node, effects) => {
+  return customShader;
+};
+
+Config.taskDelay = 0;
+Config.domRendererEnabled = false;
+```
+
+- `convertToShader` customizes how effects become renderer shaders.
+- `taskDelay` is available for delayed internal work.
+- `domRendererEnabled` exists for renderer experiments and defaults to `false`.

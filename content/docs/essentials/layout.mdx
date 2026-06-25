@@ -1,0 +1,154 @@
+---
+title: Layout
+description: Build screens with View, Row, Column, Grid, and Virtual.
+---
+
+Use layout primitives first. Reach for manual `x` and `y` only when you need
+fixed positioning.
+
+## View
+
+`View` is the base node. It can draw color, hold children, receive focus, and
+use padding.
+
+```svelte
+<View w={1920} h={1080} color="#020617ff" padding={80}>
+  <Text text="Home" fontSize={56} />
+</View>
+```
+
+Padding works on normal views and flex views. If a child has its own `x` or
+`y`, that explicit position wins.
+
+## Row
+
+Use `Row` for horizontal rails.
+
+```svelte
+<script lang="ts">
+  import { Row, Text, View } from 'svelte-tv';
+
+  const items = ['Continue', 'Trending', 'New'];
+</script>
+
+<Row gap={24} selected={0}>
+  {#each items as title, index}
+    <View
+      autofocus={index === 0}
+      color="#1e293bff"
+      borderRadius={12}
+      padding={24}
+      transition={{ scale: true }}
+      style={{ $focus: { scale: 1.06 } }}
+    >
+      <Text text={title} fontSize={28} />
+    </View>
+  {/each}
+</Row>
+```
+
+Rows handle left and right focus movement for you.
+
+## Column
+
+Use `Column` for vertical menus and stacked content.
+
+```svelte
+<script lang="ts">
+  import { Column, Text, View } from 'svelte-tv';
+
+  const menu = ['Home', 'Search', 'Settings'];
+</script>
+
+<Column gap={12} selected={0}>
+  {#each menu as label}
+    <View
+      color="#111827ff"
+      borderRadius={8}
+      padding={[16, 22]}
+      transition={{ color: true }}
+      style={{ $focus: { color: '#2563ebff' } }}
+    >
+      <Text text={label} fontSize={26} />
+    </View>
+  {/each}
+</Column>
+```
+
+Columns handle up and down focus movement.
+
+## Flex Views
+
+Use `display="flex"` when a single view should arrange its children.
+
+```svelte
+<View
+  color="#111827ff"
+  borderRadius={12}
+  padding={24}
+  display="flex"
+  flexDirection="column"
+  gap={8}
+>
+  <Text text="Profile" fontSize={30} />
+  <Text text="Signed in" fontSize={22} color="#94a3b8ff" />
+</View>
+```
+
+## Grid
+
+Use `Grid` when items have a stable cell size.
+
+```svelte
+<script lang="ts">
+  import { Grid, Text, View } from 'svelte-tv';
+
+  const items = Array.from({ length: 12 }, (_, index) => `Item ${index + 1}`);
+</script>
+
+<Grid items={items} columns={4} itemWidth={260} itemHeight={140}>
+  {#snippet children({ item, index, x, y, width, height })}
+    <View
+      {x}
+      {y}
+      w={width - 20}
+      h={height - 20}
+      color="#1e293bff"
+      borderRadius={12}
+      padding={20}
+      transition={{ scale: true }}
+      style={{ $focus: { scale: 1.05 } }}
+    >
+      <Text text={item} fontSize={24} />
+    </View>
+  {/snippet}
+</Grid>
+```
+
+## Virtual
+
+Use virtual lists when there are many items.
+
+```svelte
+<script lang="ts">
+  import { Text, View, Virtual } from 'svelte-tv';
+
+  const rows = Array.from({ length: 1000 }, (_, index) => `Row ${index + 1}`);
+</script>
+
+<Virtual each={rows} displaySize={8} bufferSize={2}>
+  {#snippet children({ item })}
+    <View w={640} h={64} color="#111827ff" padding={[16, 24]}>
+      <Text text={item} fontSize={24} />
+    </View>
+  {/snippet}
+</Virtual>
+```
+
+## Rules of Thumb
+
+- Use `padding` inside cards and panels.
+- Use `gap` between repeated items.
+- Use `Row` and `Column` before writing custom focus handlers.
+- Use explicit `w` and `h` for screens, images, grid cells, and virtual items.
+- Use `x` and `y` for fixed regions, overlays, and custom scenes.

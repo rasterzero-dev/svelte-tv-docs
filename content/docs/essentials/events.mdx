@@ -1,0 +1,105 @@
+---
+title: Events
+description: Key handlers, lifecycle handlers, and renderer events.
+---
+
+Events are passed as props on `View`, `Text`, and primitives.
+
+## Key Events
+
+Return `true` when your handler consumed the key.
+
+```svelte
+<View
+  autofocus
+  padding={24}
+  color="#1d4ed8ff"
+  onEnter={() => {
+    console.log('open');
+    return true;
+  }}
+>
+  <Text text="Open" fontSize={28} />
+</View>
+```
+
+Common handlers:
+
+- `onEnter`
+- `onBackspace`
+- `onEscape`
+- `onLeft`
+- `onRight`
+- `onUp`
+- `onDown`
+
+## Directional Events
+
+Use directional handlers for page-level jumps.
+
+```svelte
+<script lang="ts">
+  let menu: { setFocus: () => void };
+</script>
+
+<View
+  onLeft={() => {
+    menu.setFocus();
+    return true;
+  }}
+>
+  <Text text="Content" fontSize={28} />
+</View>
+```
+
+For lists, prefer `Row`, `Column`, `Grid`, `Virtual`, or `VirtualGrid`.
+
+## Lifecycle Events
+
+```svelte
+<View
+  onCreate={(el) => console.log('created', el)}
+  onRender={(el) => console.log('rendered', el)}
+  onRemove={(el) => console.log('removed', el)}
+  onDestroy={(el) => console.log('destroyed', el)}
+/>
+```
+
+`onCreate` runs when the renderer node is created. `onDestroy` may return a
+promise when cleanup needs to wait.
+
+## Renderer Events
+
+Use `onEvent` for renderer-level events.
+
+```svelte
+<View
+  onEvent={{
+    inViewport: () => console.log('visible'),
+    outOfViewport: () => console.log('offscreen'),
+  }}
+/>
+```
+
+Supported event keys include:
+
+- `loaded`
+- `failed`
+- `freed`
+- `inBounds`
+- `outOfBounds`
+- `inViewport`
+- `outOfViewport`
+
+## Animation Events
+
+```svelte
+<View
+  transition={{ scale: true }}
+  onAnimation={{
+    stopped: (name) => console.log(`${name} stopped`),
+  }}
+/>
+```
+
+Use these sparingly. Most UI can react to state changes instead.

@@ -1,0 +1,17 @@
+{
+  "title": "Essentials",
+  "pages": [
+    "components",
+    "text-images",
+    "focus",
+    "layout",
+    "events",
+    "styles-states",
+    "transitions",
+    "screen-resolution",
+    "visibility",
+    "routing",
+    "effects",
+    "performance"
+  ]
+}

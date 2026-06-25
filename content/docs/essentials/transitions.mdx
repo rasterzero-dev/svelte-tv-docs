@@ -1,0 +1,219 @@
+---
+title: Transitions
+description: Prop transitions, direct animations, chained animations, and destroy animations.
+---
+
+Transitions animate renderer props when they change.
+
+## Prop Transitions
+
+List every prop you want to animate.
+
+```svelte
+<View
+  color="#111827ff"
+  scale={1}
+  transition={{ scale: true, color: true }}
+  style={{
+    $focus: {
+      scale: 1.06,
+      color: '#2563ebff',
+    },
+  }}
+>
+  <Text text="Card" fontSize={28} />
+</View>
+```
+
+When the node receives `$focus`, `scale` and `color` animate instead of jumping.
+
+## Custom Settings Per Prop
+
+Use `true` for the default animation settings, or pass settings per prop.
+
+```svelte
+<View
+  transition={{
+    scale: { duration: 180, easing: 'ease-out' },
+    color: { duration: 120 },
+    alpha: true,
+  }}
+/>
+```
+
+## Transition All Props
+
+Use `transition={true}` when all transitionable prop changes should animate.
+
+```svelte
+<View
+  transition={true}
+  animationSettings={{ duration: 220, easing: 'ease-in-out' }}
+/>
+```
+
+Use this carefully. Explicit transition maps are easier to reason about on large
+screens.
+
+## Global Defaults
+
+```ts
+import { Config } from 'svelte-tv';
+
+Config.animationSettings = {
+  duration: 250,
+  easing: 'ease-in-out',
+};
+```
+
+These defaults are used when a transition entry is `true` or when direct
+animations do not pass settings.
+
+## Disable Transitions
+
+```ts
+Config.animationsEnabled = false;
+```
+
+This disables prop transitions globally. It does not disable direct
+`element.animate(...)` calls.
+
+## Direct Animations
+
+Use `ElementNode.animate()` for one-off animations.
+
+```svelte
+<script lang="ts">
+  import type { ElementNode } from 'svelte-tv';
+
+  function onCreate(el: ElementNode) {
+    el.alpha = 0;
+    el.animate({ alpha: 1, scale: 1.04 }, { duration: 220 }).start();
+  }
+</script>
+
+<View onCreate={onCreate}>
+  <Text text="Fade in" fontSize={28} />
+</View>
+```
+
+Direct animations run through the Lightning renderer animation API.
+
+## Wait for an Animation
+
+Animation controllers expose `waitUntilStopped()`.
+
+```ts
+async function fadeIn(el: ElementNode) {
+  el.alpha = 0;
+  await el
+    .animate({ alpha: 1 }, { duration: 200, easing: 'ease-out' })
+    .start()
+    .waitUntilStopped();
+}
+```
+
+Use this when the next action should wait for the animation to finish.
+
+## Chained Animations
+
+Use `chain()` for sequential animations on the same node.
+
+```ts
+el
+  .chain({ x: 80, alpha: 1 }, { duration: 150 })
+  .chain({ scale: 1.08 }, { duration: 120 })
+  .chain({ scale: 1 }, { duration: 120 })
+  .start();
+```
+
+If a chain step does not pass settings, it reuses the previous settings.
+
+## Destroy Animations
+
+`onDestroy` can return a promise. Svelte TV waits for the promise before
+destroying the renderer node.
+
+```svelte
+<script lang="ts">
+  import type { ElementNode } from 'svelte-tv';
+
+  function animateIn(el: ElementNode) {
+    el.alpha = 0;
+    el.y = -40;
+
+    return el
+      .animate({ alpha: 1, y: 0 }, { duration: 220, easing: 'ease-out' })
+      .start()
+      .waitUntilStopped();
+  }
+
+  function animateOut(el: ElementNode) {
+    return el
+      .animate({ alpha: 0, y: 40 }, { duration: 180, easing: 'ease-in' })
+      .start()
+      .waitUntilStopped();
+  }
+</script>
+
+{#if open}
+  <View onCreate={animateIn} onDestroy={animateOut}>
+    <Text text="Animated panel" fontSize={30} />
+  </View>
+{/if}
+```
+
+This is the pattern to use for page panels, overlays, and keyed content that
+should animate out before it disappears.
+
+## FadeInOut
+
+Use `FadeInOut` for the common alpha-in/alpha-out case.
+
+```svelte
+<FadeInOut when={open} fadeTransition={{ duration: 180 }}>
+  <View color="#111827ff" padding={32}>
+    <Text text="Panel" fontSize={30} />
+  </View>
+</FadeInOut>
+```
+
+For movement, scale, or custom timing, use `onCreate` and `onDestroy` directly.
+
+## Animation Callbacks
+
+`onAnimation` can listen for transition animation lifecycle events.
+
+```svelte
+<View
+  transition={{ scale: true }}
+  onAnimation={{
+    animating: (name, endValue) => {
+      console.log(`${name} animating to`, endValue);
+    },
+    stopped: (name, endValue) => {
+      console.log(`${name} stopped at`, endValue);
+    },
+  }}
+/>
+```
+
+Svelte TV currently exposes `animating` and `stopped` callbacks.
+
+## Bypass Transitions
+
+Setting renderer props directly on `lng` bypasses Svelte TV transition handling.
+
+```ts
+el.lng.alpha = 0.5;
+```
+
+Use this only for advanced cases. In normal UI code, prefer props, state styles,
+or direct `animate()` calls.
+
+## Advice
+
+- Keep focus transitions short: `120ms` to `220ms` usually feels good.
+- Animate `scale`, `alpha`, `color`, and small position changes.
+- Avoid long animations in frequently navigated rails.
+- Return `true` from key handlers before starting navigation animations.

@@ -1,0 +1,62 @@
+---
+title: Performance
+description: Keep TV UIs fast and predictable.
+---
+
+TV apps run on very different hardware. Prefer stable layout, predictable focus,
+and fewer renderer nodes.
+
+## Keep Layout Stable
+
+Give stable dimensions to content that loads later.
+
+```svelte
+<Image
+  w={320}
+  h={180}
+  src={posterUrl}
+  placeholder="/poster-placeholder.jpg"
+/>
+```
+
+Avoid rows whose item size changes after focus or image load.
+
+## Use Virtual Lists
+
+Use `Virtual` and `VirtualGrid` for large collections.
+
+```svelte
+<Virtual each={items} displaySize={8} bufferSize={2}>
+  {#snippet children({ item })}
+    <View w={640} h={72} padding={[16, 24]} color="#111827ff">
+      <Text text={item.title} fontSize={24} />
+    </View>
+  {/snippet}
+</Virtual>
+```
+
+## Avoid Unnecessary Work
+
+- Keep focus animations short.
+- Avoid recreating large arrays inside markup.
+- Prefer `Row`, `Column`, and `Grid` over custom key logic.
+- Use `KeepAliveRoute` or `Preserve` for expensive UI that is revisited often.
+- Keep image sizes close to the size they render on screen.
+
+## Renderer Options
+
+Common production options:
+
+```ts
+Config.rendererOptions = {
+  textureMemory: {
+    criticalThreshold: 200e6,
+    targetThresholdLevel: 0.8,
+  },
+  numImageWorkers: 4,
+  boundsMargin: 100,
+  targetFPS: 0,
+};
+```
+
+See [Config](/docs/guides/config) for the full list of global settings.

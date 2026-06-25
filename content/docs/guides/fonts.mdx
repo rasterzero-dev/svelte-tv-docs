@@ -1,0 +1,83 @@
+---
+title: Fonts
+description: Generate and load WebGL text fonts.
+---
+
+WebGL text needs generated SDF font assets.
+
+## Add Fonts
+
+Put font files in your app:
+
+```txt
+src/fonts/
+  Roboto-Regular.ttf
+```
+
+Supported formats: `.ttf`, `.otf`, `.woff`, `.woff2`.
+
+## Configure Vite
+
+```ts title="vite.config.ts"
+import { svelte, vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+import { defineConfig } from 'vite';
+import { svelteTvFonts } from 'svelte-tv/vite';
+
+export default defineConfig({
+  plugins: [
+    svelteTvFonts({
+      input: 'src/fonts',
+      charsets: {
+        '*': {
+          charset:
+            ' abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,:;!?-_/',
+        },
+      },
+    }),
+    svelte({
+      preprocess: vitePreprocess({ script: true }),
+    }),
+  ],
+});
+```
+
+The plugin writes files to `public/generated/fonts` by default.
+
+## Load Fonts
+
+```svelte title="src/App.svelte"
+<script lang="ts">
+  import { LightningRoot, loadGeneratedFonts } from 'svelte-tv';
+</script>
+
+<LightningRoot onReady={() => loadGeneratedFonts()}>
+  <!-- app -->
+</LightningRoot>
+```
+
+`loadGeneratedFonts()` loads `/generated/fonts/manifest.json`.
+
+## Set the Default Font
+
+```ts title="src/main.ts"
+import { Config } from 'svelte-tv';
+
+Config.fontSettings.fontFamily = 'Roboto-Regular';
+Config.fontSettings.fontSize = 32;
+```
+
+## Add More Characters
+
+Only characters in the charset are generated. Add every character your UI copy
+needs.
+
+```ts
+svelteTvFonts({
+  charsets: {
+    '*': {
+      charset:
+        ' abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ğĞüÜşŞıİöÖçÇ.,:;!?-_/',
+    },
+  },
+});
+```

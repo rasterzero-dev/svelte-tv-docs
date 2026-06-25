@@ -1,0 +1,115 @@
+---
+title: Effects
+description: Radius, borders, shadows, gradients, and focus effects.
+---
+
+Effects are regular `View` props.
+
+## Radius
+
+```svelte
+<View w={320} h={180} color="#1e293bff" borderRadius={18} />
+```
+
+Per-corner radius:
+
+```svelte
+<View w={320} h={180} color="#1e293bff" borderRadius={[24, 8, 24, 8]} />
+```
+
+## Borders
+
+```svelte
+<View
+  w={320}
+  h={180}
+  color="#111827ff"
+  borderRadius={18}
+  border={{ width: 4, color: '#ffffffff' }}
+/>
+```
+
+Side borders:
+
+```svelte
+<View
+  w={320}
+  h={180}
+  color="#111827ff"
+  borderLeft={{ width: 10, color: '#38bdf8ff' }}
+/>
+```
+
+## Shadow
+
+```svelte
+<View
+  w={320}
+  h={180}
+  color="#020617ff"
+  borderRadius={20}
+  shadow={{
+    color: '#000000aa',
+    blur: 24,
+    x: 0,
+    y: 12,
+  }}
+/>
+```
+
+## Gradients
+
+```svelte
+<View
+  w={420}
+  h={200}
+  borderRadius={20}
+  linearGradient={{
+    angle: Math.PI * 0.75,
+    stops: [0, 0.55, 1],
+    colors: [0x38bdf8ff, 0x1e293bff, 0x020617ff],
+  }}
+/>
+```
+
+```svelte
+<View
+  w={420}
+  h={200}
+  borderRadius={20}
+  radialGradient={{
+    pivot: [0.5, 0.5],
+    w: 420,
+    h: 200,
+    stops: [0, 0.3, 1],
+    colors: [0xfef08aff, 0xf59e0bff, 0x1e1b4bff],
+  }}
+/>
+```
+
+## Focus Effects
+
+Combine effects with `$focus`.
+
+```svelte
+<View
+  autofocus
+  color="#111827ff"
+  borderRadius={16}
+  padding={24}
+  border={{ width: 2, color: '#ffffff44' }}
+  transition={{ scale: true, color: true, border: true }}
+  style={{
+    $focus: {
+      scale: 1.06,
+      color: '#1d4ed8ff',
+      border: { width: 4, color: '#ffffffff' },
+    },
+  }}
+>
+  <Text text="Focusable card" fontSize={28} />
+</View>
+```
+
+WebGL is the recommended renderer for production effects. Canvas is useful for
+debugging, but small visual differences are possible.

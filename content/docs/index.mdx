@@ -1,13 +1,49 @@
 ---
-title: Hello World
-description: Your first document
+title: Introduction
+description: Svelte for Lightning TV apps.
 ---
 
-Welcome to the docs! You can start writing documents in `/content/docs`.
+Svelte TV lets you build Lightning renderer apps with Svelte components.
 
-## What is Next?
+It gives you the pieces TV apps need most:
+
+- a `LightningRoot` for renderer setup
+- `View` and `Text` components
+- focus handling for remotes
+- rows, columns, grids, modals, drawers, and other TV primitives
+- hash routing
+- generated WebGL fonts
+
+## Start Here
 
 <Cards>
-  <Card title="Learn more about Next.js" href="https://nextjs.org/docs" />
-  <Card title="Learn more about Fumadocs" href="https://fumadocs.dev" />
+  <Card title="Getting Started" href="/docs/getting-started" />
+  <Card title="Layout" href="/docs/essentials/layout" />
+  <Card title="Focus" href="/docs/essentials/focus" />
+  <Card title="Primitives" href="/docs/guides/primitives" />
 </Cards>
+
+## Mental Model
+
+Most screens are built from a small set of ideas:
+
+- `View` is a renderer node.
+- `Text` draws text.
+- `Row` and `Column` handle common focus movement.
+- Focus styles live in `style={{ $focus: ... }}`.
+- Use `padding` and `gap` before reaching for manual `x` and `y`.
+- Use explicit `w` and `h` for screens, images, grids, and virtual viewports.
+
+## Recommended Reading Order
+
+1. [Getting Started](/docs/getting-started)
+2. [Components](/docs/essentials/components)
+3. [Layout](/docs/essentials/layout)
+4. [Focus](/docs/essentials/focus)
+5. [Text and Images](/docs/essentials/text-images)
+6. [Styles and States](/docs/essentials/styles-states)
+7. [Transitions](/docs/essentials/transitions)
+8. [Screen Resolution](/docs/essentials/screen-resolution)
+9. [Routing](/docs/essentials/routing)
+10. [Config](/docs/guides/config)
+11. [Fonts](/docs/guides/fonts)

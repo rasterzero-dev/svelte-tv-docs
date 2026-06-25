@@ -1,0 +1,111 @@
+---
+title: Components
+description: LightningRoot, View, Text, and ElementNode basics.
+---
+
+Svelte TV components render Lightning nodes. The core components are
+`LightningRoot`, `View`, and `Text`.
+
+## LightningRoot
+
+`LightningRoot` creates the renderer and focus manager.
+
+```svelte
+<script lang="ts">
+  import { LightningRoot, loadGeneratedFonts } from 'svelte-tv';
+</script>
+
+<LightningRoot target="app" onReady={() => loadGeneratedFonts()}>
+  <!-- app scene -->
+</LightningRoot>
+```
+
+Useful props:
+
+- `target`: DOM element id for the renderer canvas.
+- `onReady`: async setup before children render.
+- `rendererOptions`: per-root renderer options.
+- `keyHoldOptions`: held key mapping.
+
+## View
+
+`View` is the base visual node.
+
+```svelte
+<View
+  x={80}
+  y={80}
+  w={400}
+  h={220}
+  color="#1e293bff"
+  borderRadius={16}
+  padding={24}
+>
+  <Text text="Card" fontSize={32} />
+</View>
+```
+
+Common props:
+
+- `x`, `y`, `w`, `h`
+- `color`, `alpha`, `scale`, `rotation`
+- `padding`, `margin`, `gap`
+- `display`, `flexDirection`, `alignItems`, `justifyContent`
+- `autofocus`, `onEnter`, `onLeft`, `onRight`, `onUp`, `onDown`
+- `style`, `transition`
+
+## Text
+
+Use `Text` for renderer text.
+
+```svelte
+<Text
+  text="Hello TV"
+  fontSize={42}
+  color="#ffffffff"
+  maxWidth={640}
+  contain="width"
+/>
+```
+
+`Text` supports text renderer props such as `fontSize`, `fontFamily`,
+`fontWeight`, `lineHeight`, `textAlign`, `maxLines`, and `contain`.
+
+## Component References
+
+Most Svelte TV components expose `setFocus()`.
+
+```svelte
+<script lang="ts">
+  let card: { setFocus: () => void };
+</script>
+
+<View bind:this={card} padding={24} color="#111827ff">
+  <Text text="Focusable" fontSize={28} />
+</View>
+```
+
+Some primitives also expose `getElement()` for advanced work with the underlying
+`ElementNode`.
+
+## ElementNode
+
+`ElementNode` is the runtime object behind `View` and many primitives. Use it
+when you need imperative control.
+
+```svelte
+<script lang="ts">
+  import type { ElementNode } from 'svelte-tv';
+
+  function created(el: ElementNode) {
+    el.animate({ alpha: 1 }, { duration: 200 }).start();
+  }
+</script>
+
+<View alpha={0} onCreate={created}>
+  <Text text="Animated in" fontSize={28} />
+</View>
+```
+
+Prefer declarative props first. Use `ElementNode` for focus, animations,
+inspection, and advanced renderer behavior.

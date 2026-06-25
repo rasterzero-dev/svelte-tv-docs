@@ -1,0 +1,245 @@
+---
+title: Primitives
+description: Ready-made building blocks for TV interfaces.
+---
+
+Primitives are small components built on `View`, `Text`, and focus handling.
+Use them when they match the UI you are building.
+
+## Button
+
+```svelte
+<Button
+  autofocus
+  color="#1d4ed8ff"
+  borderRadius={10}
+  padding={[20, 28]}
+  transition={{ scale: true }}
+  style={{ $focus: { scale: 1.05 } }}
+  onEnter={() => {
+    console.log('play');
+    return true;
+  }}
+>
+  <Text text="Play" fontSize={28} />
+</Button>
+```
+
+## Card
+
+`Card` is a focusable surface with sensible default padding.
+
+```svelte
+<Card
+  w={320}
+  h={160}
+  color="#111827ff"
+  borderRadius={12}
+  transition={{ scale: true }}
+  style={{ $focus: { scale: 1.05 } }}
+>
+  <Text text="Featured" fontSize={28} />
+  <Text text="Press Enter" fontSize={20} color="#94a3b8ff" />
+</Card>
+```
+
+## IconButton
+
+```svelte
+<IconButton
+  color="#111827ff"
+  padding={16}
+  revealPlacement="right"
+  style={{ $focus: { color: '#1d4ed8ff' } }}
+>
+  {#snippet icon()}
+    <Text text="+" fontSize={30} />
+  {/snippet}
+
+  <Text text="Add" fontSize={24} />
+</IconButton>
+```
+
+## Row, Column, Grid
+
+Use the layout primitives for directional navigation.
+
+```svelte
+<Row gap={24} selected={0}>
+  <Card color="#111827ff">
+    <Text text="One" fontSize={26} />
+  </Card>
+  <Card color="#111827ff">
+    <Text text="Two" fontSize={26} />
+  </Card>
+</Row>
+```
+
+For details, see [Layout](/docs/essentials/layout).
+
+## Virtual
+
+Use `Virtual` and `VirtualGrid` for long lists.
+
+```svelte
+<Virtual each={items} displaySize={6} bufferSize={2}>
+  {#snippet children({ item })}
+    <Card w={520} h={72} color="#111827ff">
+      <Text text={item.title} fontSize={24} />
+    </Card>
+  {/snippet}
+</Virtual>
+```
+
+```svelte
+<VirtualGrid each={items} columns={4} rows={3}>
+  {#snippet children({ item, x, y })}
+    <Card {x} {y} w={220} h={120} color="#111827ff">
+      <Text text={item.title} fontSize={22} />
+    </Card>
+  {/snippet}
+</VirtualGrid>
+```
+
+## Modal
+
+```svelte
+<script lang="ts">
+  let open = $state(false);
+</script>
+
+<Modal open={open} overlayColor="#000000aa" onClose={() => (open = false)}>
+  <Text text="Confirm" fontSize={34} />
+  <Button onEnter={() => ((open = false), true)}>
+    <Text text="Close" fontSize={26} />
+  </Button>
+</Modal>
+```
+
+## Drawer
+
+```svelte
+<Drawer open={open} side="right" onClose={() => (open = false)}>
+  <Text text="Settings" fontSize={38} />
+  <Button onEnter={() => ((open = false), true)}>
+    <Text text="Close" fontSize={26} />
+  </Button>
+</Drawer>
+```
+
+## Toast
+
+```svelte
+<Toast
+  open={saved}
+  duration={2500}
+  onClose={() => (saved = false)}
+>
+  <Text text="Saved" fontSize={24} />
+</Toast>
+```
+
+## Image
+
+```svelte
+<Image
+  w={320}
+  h={180}
+  src={posterUrl}
+  placeholder="/poster-placeholder.jpg"
+  fallback="/poster-fallback.jpg"
+/>
+```
+
+See [Text and Images](/docs/essentials/text-images).
+
+## Marquee
+
+Use `Marquee` for long titles inside a fixed area.
+
+```svelte
+<Marquee
+  w={420}
+  h={40}
+  marquee
+  text="A long title that scrolls when needed"
+  speed={100}
+  textProps={{ fontSize: 26 }}
+/>
+```
+
+## Skeleton
+
+```svelte
+<Skeleton w={320} h={180} borderRadius={14} />
+```
+
+Skeletons are useful while data or images are loading.
+
+## FadeInOut
+
+```svelte
+<FadeInOut when={open} fadeTransition={{ duration: 180 }}>
+  <View color="#111827ff" padding={32}>
+    <Text text="Panel" fontSize={30} />
+  </View>
+</FadeInOut>
+```
+
+## Visible and Preserve
+
+```svelte
+<Visible when={loaded}>
+  <Text text="Ready" fontSize={28} />
+</Visible>
+```
+
+```svelte
+<Preserve>
+  <ExpensiveSurface />
+</Preserve>
+```
+
+See [Visibility](/docs/essentials/visibility).
+
+## FPSCounter
+
+```svelte
+<FPSCounter x={1660} y={40} />
+```
+
+Enable FPS updates first:
+
+```ts
+Config.rendererOptions.fpsUpdateInterval = 1000;
+```
+
+## useHold
+
+`useHold` separates press and hold behavior.
+
+```svelte
+<script lang="ts">
+  import { useHold } from 'svelte-tv';
+
+  const [onEnter, onEnterUp] = useHold({
+    onEnter: () => console.log('pressed'),
+    onHold: () => console.log('held'),
+    onRelease: () => console.log('released'),
+    holdThreshold: 500,
+  });
+</script>
+
+<Button {onEnter} {onEnterUp}>
+  <Text text="Hold me" fontSize={26} />
+</Button>
+```
+
+## Choosing a Primitive
+
+- Use `Button` for actions.
+- Use `Card` for repeated selectable surfaces.
+- Use `Row`, `Column`, and `Grid` for navigation.
+- Use `Virtual` and `VirtualGrid` for large collections.
+- Use `Modal`, `Drawer`, and `Toast` for overlays and feedback.
+- Use `Visible`, `Preserve`, and `FadeInOut` for lifecycle behavior.

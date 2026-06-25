@@ -1,0 +1,118 @@
+---
+title: Screen Resolution
+description: Design at 1920x1080 and scale to the device.
+---
+
+Most Svelte TV apps are designed in a fixed 1920x1080 coordinate system. The
+renderer then scales that logical scene to the real device size.
+
+## The Basic Setup
+
+```ts title="src/main.ts"
+Config.rendererOptions = {
+  appWidth: 1920,
+  appHeight: 1080,
+  deviceLogicalPixelRatio: window.innerHeight / 1080,
+  devicePhysicalPixelRatio: 1,
+};
+```
+
+Then build screens using 1080p coordinates:
+
+```svelte
+<View w={1920} h={1080} color="#020617ff" padding={80}>
+  <Text text="Home" fontSize={56} />
+</View>
+```
+
+## Common Ratios
+
+Use the screen height to calculate the logical ratio.
+
+```ts
+const deviceLogicalPixelRatio = window.innerHeight / 1080;
+```
+
+Common values:
+
+- 720p: `0.666667`
+- 1080p: `1`
+- 1440p: `1.333333`
+- 2160p: `2`
+
+## Query Param Presets
+
+During development, it is useful to force known sizes.
+
+```ts title="src/main.ts"
+const screenSize =
+  new URLSearchParams(window.location.search).get('size') ?? 'default';
+
+const deviceLogicalPixelRatio =
+  {
+    '720': 0.666667,
+    '1080': 1,
+    '4k': 2,
+    default: window.innerHeight / 1080,
+  }[screenSize] ?? 1;
+
+Config.rendererOptions = {
+  appWidth: 1920,
+  appHeight: 1080,
+  deviceLogicalPixelRatio,
+  devicePhysicalPixelRatio: 1,
+};
+```
+
+Example URLs:
+
+```txt
+http://localhost:5173/?size=720
+http://localhost:5173/?size=1080
+http://localhost:5173/?size=4k
+```
+
+## Why Height-Based Scaling?
+
+Most TV UIs target 16:9 screens. Scaling from height keeps the 1080p layout
+consistent across 720p, 1080p, and 4K displays.
+
+If your app runs on unusual aspect ratios, keep the main safe area centered and
+avoid placing critical UI at the extreme edges.
+
+## Safe Areas
+
+Use padding around the root view.
+
+```svelte
+<View w={1920} h={1080} color="#020617ff" padding={80}>
+  <!-- screen content -->
+</View>
+```
+
+For living room interfaces, `60` to `100` logical pixels of edge padding is a
+good starting point.
+
+## Images and Text
+
+- Keep image `w` and `h` stable.
+- Use `contain="width"` for wrapping text.
+- Avoid scaling text with viewport width.
+- Test dense screens at 720p and 4K.
+
+## Renderer Options
+
+Useful options for resolution work:
+
+```ts
+Config.rendererOptions = {
+  appWidth: 1920,
+  appHeight: 1080,
+  deviceLogicalPixelRatio,
+  devicePhysicalPixelRatio: 1,
+  boundsMargin: 100,
+};
+```
+
+`boundsMargin` keeps nearby offscreen content alive, which helps with scrolling
+rails and virtual lists.
