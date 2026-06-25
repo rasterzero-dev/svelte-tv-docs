@@ -1,0 +1,41 @@
+---
+title: Requirements
+description: Runtime requirements for Svelte TV apps.
+---
+
+Svelte TV apps are built on Svelte 5 and LightningJS v3. They run in a
+JavaScript engine that supports modern ES2015 features used by the framework and
+renderer.
+
+## Minimum Browser Engine
+
+The minimum supported browser engine is Chrome 49, or another browser engine
+with equivalent JavaScript `Proxy` support.
+
+`Proxy` is required by modern reactive JavaScript libraries and cannot be fully
+polyfilled for older engines. If a target TV browser does not support
+`new Proxy(target, handler)`, it should be treated as unsupported.
+
+References:
+
+- [MDN: Proxy browser compatibility](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy)
+- [Chrome for Developers: ES2015 Proxies in Chrome 49 and later](https://developer.chrome.com/blog/es2015-proxies)
+- [Can I Use: JavaScript Proxy support](https://caniuse.com/?search=javascript+proxy)
+
+## Framework Requirements
+
+Svelte TV depends on:
+
+- Svelte 5 for the component and reactivity model
+- LightningJS v3 for the TV renderer
+- a browser runtime with ES2015 `Proxy` support
+- WebGL support for rendering
+
+## Target Devices
+
+Before shipping to a TV platform, verify the actual embedded browser version on
+the device. Some TV operating systems use Chromium-based engines but ship older
+runtime versions than desktop browsers.
+
+If the engine is Chrome 49 or newer, or matches Chrome 49's `Proxy` support
+level, it meets the minimum JavaScript requirement.
