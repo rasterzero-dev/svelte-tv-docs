@@ -34,6 +34,9 @@ Use `autofocus` on the first useful item on a screen.
 </View>
 ```
 
+`autofocus` is applied as an initial focus hint. Updating props later does not
+make the same node reclaim focus from the user's current selection.
+
 ## Enter
 
 Return `true` from key handlers when the key was handled.

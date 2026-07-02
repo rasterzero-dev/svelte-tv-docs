@@ -1,0 +1,275 @@
+---
+title: Flex
+description: Arrange children with flex containers, gaps, wrapping, and alignment.
+---
+
+Use `display="flex"` when a `View` should calculate child positions for you.
+Flex is the right fit for rows, columns, menus, button contents, rails, and
+panels whose children should stay spaced as content changes.
+
+## Basic Container
+
+```svelte
+<View
+  w={760}
+  h={180}
+  padding={24}
+  display="flex"
+  flexDirection="row"
+  gap={20}
+  color="#111827ff"
+>
+  <View w={160} h={120} color="#1d4ed8ff" />
+  <View w={220} h={120} color="#334155ff" />
+  <View w={160} h={120} color="#0f766eff" />
+</View>
+```
+
+`gap` adds space between processed flex children. Padding belongs to the
+container and offsets the layout from its edges.
+
+## Direction
+
+`flexDirection` controls the main axis.
+
+- `row` lays out children left to right.
+- `column` lays out children top to bottom.
+- `row-reverse` and `column-reverse` reverse the visual order.
+
+```svelte
+<View display="flex" flexDirection="column" gap={12}>
+  <Text text="Home" fontSize={28} />
+  <Text text="Search" fontSize={28} />
+  <Text text="Settings" fontSize={28} />
+</View>
+```
+
+Use `direction="rtl"` when a row should flow right to left.
+
+## Justify Content
+
+`justifyContent` aligns children on the main axis.
+
+```svelte
+<View
+  w={720}
+  h={120}
+  display="flex"
+  justifyContent="spaceBetween"
+  alignItems="center"
+>
+  <View w={80} h={80} color="#1d4ed8ff" />
+  <View w={80} h={80} color="#334155ff" />
+  <View w={80} h={80} color="#0f766eff" />
+</View>
+```
+
+Supported values:
+
+- `flexStart`
+- `flexEnd`
+- `center`
+- `spaceBetween`
+- `spaceAround`
+- `spaceEvenly`
+
+## Align Items
+
+`alignItems` aligns children on the cross axis.
+
+```svelte
+<View
+  w={520}
+  h={180}
+  padding={24}
+  display="flex"
+  flexDirection="column"
+  gap={12}
+  alignItems="center"
+>
+  <View w={240} h={48} color="#1d4ed8ff" />
+  <View w={120} h={48} color="#334155ff" />
+</View>
+```
+
+Supported values:
+
+- `flexStart`
+- `flexEnd`
+- `center`
+- `stretch`
+
+`stretch` makes children fill the cross axis inside the container padding and
+their own margins.
+
+```svelte
+<View
+  w={520}
+  h={180}
+  padding={24}
+  display="flex"
+  flexDirection="column"
+  gap={12}
+  alignItems="stretch"
+>
+  <View h={56} color="#1d4ed8ff" />
+  <View h={56} color="#334155ff" />
+</View>
+```
+
+If a stretched child is also a flex container, its layout is recalculated with
+the stretched size.
+
+## Align Self
+
+Use `alignSelf` on a child to override the container alignment for that item.
+
+```svelte
+<View w={520} h={160} display="flex" alignItems="center" gap={16}>
+  <View w={100} h={64} color="#1d4ed8ff" />
+  <View
+    w={100}
+    h={64}
+    alignSelf="stretch"
+    color="#0f766eff"
+  />
+</View>
+```
+
+`alignSelf` supports the same values as `alignItems`, including `stretch`.
+
+## Grow, Shrink, and Basis
+
+Use `flexGrow` when an item should take remaining main-axis space.
+
+```svelte
+<View w={640} h={64} display="flex" alignItems="center" gap={20}>
+  <Text text="Loading" fontSize={28} />
+  <View flexGrow={1} h={4} color="#38bdf8ff" />
+</View>
+```
+
+Multiple growing children divide the remaining space by their grow ratios.
+
+```svelte
+<View w={640} h={48} display="flex" gap={12}>
+  <View flexGrow={1} h={48} color="#1d4ed8ff" />
+  <View flexGrow={3} h={48} color="#334155ff" />
+  <View flexGrow={1} h={48} color="#0f766eff" />
+</View>
+```
+
+Use `flexShrink` when children are allowed to shrink if their total size is too
+large for the container. Use `flexBasis` to set the base size before grow or
+shrink space is distributed.
+
+```svelte
+<View w={360} h={80} display="flex" gap={12}>
+  <View flexBasis={180} flexShrink={1} h={80} color="#1d4ed8ff" />
+  <View flexBasis={240} flexShrink={2} h={80} color="#334155ff" />
+</View>
+```
+
+`flexBasis` accepts a number or `auto`. With `auto`, the child's current `w` or
+`h` is used as the base size.
+
+## Wrapping
+
+Use `flexWrap="wrap"` when children should continue on the next line or column.
+
+```svelte
+<View
+  w={420}
+  display="flex"
+  flexWrap="wrap"
+  gap={12}
+  rowGap={16}
+  columnGap={12}
+>
+  {#each Array.from({ length: 8 }) as _, index}
+    <View w={120} h={72} color={index % 2 ? '#334155ff' : '#1d4ed8ff'} />
+  {/each}
+</View>
+```
+
+Use `wrap-reverse` when wrapped lines should move in the opposite cross-axis
+direction. `rowGap` and `columnGap` can override the cross-axis gap used while
+wrapping.
+
+## Order and Excluded Children
+
+`flexOrder` changes layout order without changing Svelte source order.
+
+```svelte
+<View display="flex" gap={12}>
+  <View flexOrder={2} w={80} h={80} color="#1d4ed8ff" />
+  <View flexOrder={1} w={80} h={80} color="#0f766eff" />
+</View>
+```
+
+Set `flexItem={false}` on a child that should be ignored by flex layout.
+
+Late-mounted children keep their Svelte source order, including children
+rendered by conditionals.
+
+## Boundaries
+
+By default, a flex container can size itself from its children when the relevant
+dimension is not fixed. Use `flexBoundary="fixed"` when the main axis should
+stay at the container size, and use `flexCrossBoundary="fixed"` when the cross
+axis should stay fixed.
+
+```svelte
+<View
+  w={600}
+  h={160}
+  display="flex"
+  flexBoundary="fixed"
+  flexCrossBoundary="fixed"
+  justifyContent="center"
+  alignItems="center"
+>
+  <View w={180} h={80} color="#1d4ed8ff" />
+</View>
+```
+
+## Margins and Padding
+
+Flex layout reads container padding and child margins.
+
+```svelte
+<View display="flex" padding={[24, 32, 24, 32]} gap={16}>
+  <View w={120} h={80} marginRight={20} color="#1d4ed8ff" />
+  <View w={120} h={80} margin={[0, 0, 0, 12]} color="#334155ff" />
+</View>
+```
+
+Array order follows CSS: `[top, right, bottom, left]`. Individual props such as
+`paddingLeft`, `marginTop`, and `marginRight` override the matching array side.
+
+## Supported Props
+
+Container props:
+
+- `display`
+- `direction`
+- `flexDirection`
+- `justifyContent`
+- `alignItems`
+- `flexWrap`
+- `gap`
+- `rowGap`
+- `columnGap`
+- `flexBoundary`
+- `flexCrossBoundary`
+- `padding`, `paddingTop`, `paddingRight`, `paddingBottom`, `paddingLeft`
+
+Child props:
+
+- `alignSelf`
+- `flexBasis`
+- `flexGrow`
+- `flexItem`
+- `flexOrder`
+- `flexShrink`
+- `margin`, `marginTop`, `marginRight`, `marginBottom`, `marginLeft`

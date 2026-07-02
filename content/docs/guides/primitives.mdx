@@ -60,6 +60,33 @@ Use them when they match the UI you are building.
 </IconButton>
 ```
 
+## Icon
+
+`Icon` renders Iconify icons as Lightning textures.
+
+```svelte
+<script lang="ts">
+  import { Icon } from 'svelte-tv';
+</script>
+
+<Icon
+  icon="mdi:play"
+  width={48}
+  height={48}
+  color="#ffffffff"
+  onLoad={(name) => console.log(`${name} loaded`)}
+/>
+```
+
+You can also pass Iconify icon data directly.
+
+```svelte
+<Icon icon={customIconData} width={40} height={40} color="#38bdf8ff" />
+```
+
+When `icon` is a string, missing icons are loaded through Iconify and cached in
+local storage for later renders.
+
 ## Row, Column, Grid
 
 Use the layout primitives for directional navigation.

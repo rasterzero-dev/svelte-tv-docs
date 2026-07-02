@@ -57,6 +57,26 @@ The plugin writes files to `public/generated/fonts` by default.
 
 `loadGeneratedFonts()` loads `/generated/fonts/manifest.json`.
 
+## Measure Generated Text
+
+Use generated font metrics when layout code needs text width before rendering.
+
+```ts
+import {
+  createFontMetrics,
+  generatedFonts,
+  measureFontText,
+} from 'svelte-tv';
+
+const metrics = createFontMetrics(generatedFonts['Roboto-Regular'], 32);
+const width = measureFontText('Continue Watching', metrics, {
+  letterSpacing: 1,
+});
+```
+
+The measured width uses the generated glyph advances and kerning data for the
+selected font.
+
 ## Set the Default Font
 
 ```ts title="src/main.ts"
